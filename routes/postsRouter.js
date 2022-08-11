@@ -13,6 +13,9 @@ const {
   likeThePost,
   removeLikeFromPost,
   getUsersWhoLikedThePost,
+  addNewCommentToPost,
+  getCommentsOfaPost,
+  deleteCommentOfaPost,
 } = require("../controllers/postController");
 
 router.use(requireLogin);
@@ -25,5 +28,10 @@ router.route("/:postId/addlike").post(likeThePost);
 router.route("/:postId/removelike").post(removeLikeFromPost);
 router.route("/:postId/likedby").get(getUsersWhoLikedThePost);
 router.route("/:userName/allposts").get(getAllPostsOfUser);
+router
+  .route("/:postId/comment")
+  .get(getCommentsOfaPost)
+  .post(addNewCommentToPost)
+  .delete(deleteCommentOfaPost);
 
 module.exports = router;
