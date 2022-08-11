@@ -17,6 +17,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", require("./routes/userRouter"));
+app.use("/posts", require("./routes/postsRouter"));
 
 app.listen(process.env.PORT || PORT, () => {
   console.log(`listening to port 8080`);

@@ -24,7 +24,7 @@ router.route("/updateprofilephoto").post(updateProfilePhoto);
 router.route("/updateprofileinfo").post(updateProfileInfo);
 router.get("/allusers", getAllUsers);
 router.route("/:userName/profile").get(getUserProfile);
-outer.route("/:userName/followers").get(getFollowersDetails);
+router.route("/:userName/followers").get(getFollowersDetails);
 router.route("/:userName/following").get(getFollowingDetails);
 router.route("/:userName/follow").post(followUser);
 router.route("/:userName/unfollow").post(unfollowUser);
