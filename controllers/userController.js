@@ -157,6 +157,107 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+const getFollowersDetails = async (req, res) => {
+  try {
+    const { userName } = req.params;
+    const userDetails = await User.findOne({ userName }).populate({
+      path: "followers",
+      select: "firstName lastName userName profilephoto",
+    });
+    if (!userDetails) {
+      res.status(404).json({ message: "No user found" });
+      return;
+    }
+    res.status(200).json({ response: userDetails.followers });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const getFollowingDetails = async (req, res) => {
+  try {
+    const { userName } = req.params;
+    const userDetails = await User.findOne({ userName }).populate({
+      path: "following",
+      select: "firstName lastName userName profilephoto",
+    });
+    if (!userDetails) {
+      res.status(404).json({ message: "No user found" });
+      return;
+    }
+    res.status(200).json({ response: userDetails.following });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const followUser = async (req, res) => {
+  try {
+    const { userName } = req.params;
+    const detailsOfUserToFollow = await User.findOne({ userName });
+
+    console.log(detailsOfUserToFollow);
+    if (!detailsOfUserToFollow) {
+      res.status(400).json({ message: "Invalid request" });
+      return;
+    }
+
+    req.user.following.unshift(detailsOfUserToFollow._id);
+    detailsOfUserToFollow.followers.unshift(req.user._id);
+
+    await req.user.save();
+    await detailsOfUserToFollow.save();
+
+    res.status(200).json({ response: detailsOfUserToFollow });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const unfollowUser = async (req, res) => {
+  try {
+    const { userName } = req.params;
+    const detailsOfUserToUnFollow = await User.findOne({ userName });
+
+    if (!detailsOfUserToUnFollow) {
+      res.status(400).json({ message: "Invalid request" });
+      return;
+    }
+
+    req.user.following = req.user.following.filter(
+      (id) => id.toString() !== detailsOfUserToUnFollow._id.toString()
+    );
+
+    detailsOfUserToUnFollow.followers =
+      detailsOfUserToUnFollow.followers.filter(
+        (id) => id.toString() !== req.user._id.toString()
+      );
+
+    await req.user.save();
+    await detailsOfUserToUnFollow.save();
+
+    res.status(200).json({ response: detailsOfUserToUnFollow });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
 module.exports = {
   signUpUser,
   signInUser,
@@ -165,4 +266,8 @@ module.exports = {
   updateProfilePhoto,
   updateProfileInfo,
   getUserProfile,
+  getFollowersDetails,
+  getFollowingDetails,
+  followUser,
+  unfollowUser,
 };
