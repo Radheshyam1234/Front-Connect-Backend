@@ -16,6 +16,8 @@ app.get("/", (req, res) => {
   res.send("Hello from Front-Connect backend");
 });
 
+app.use("/user", require("./routes/userRouter"));
+
 app.listen(process.env.PORT || PORT, () => {
   console.log(`listening to port 8080`);
 });
