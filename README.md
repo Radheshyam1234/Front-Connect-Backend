@@ -14,4 +14,5 @@ Backend for Front-Connect (https://front-connect.netlify.app/) application
 1. Get followers and following Information
 1. View and Update Profile and Profile Picture
 1. Add, remove Comments, Reply on comments
+1. Socket-io connection for viewing user online or not
 
