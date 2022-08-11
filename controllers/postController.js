@@ -118,10 +118,64 @@ const getAllPostsOfUser = async (req, res) => {
   }
 };
 
+const editThePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { editedContent } = req.body;
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      res.status(400).json({ message: "No post found" });
+      return;
+    }
+    if (post.postedBy._id.toString() !== req.user._id.toString()) {
+      res.status(400).json({ message: "You haven't access to edit" });
+      return;
+    }
+
+    post.content = editedContent;
+    await post.save();
+    return res.status(200).json({ response: post });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const deletePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const post = await Post.findOne({ _id: postId, postedBy: req.user._id });
+
+    if (!post) {
+      res.status(400).json({ message: "No post found" });
+      return;
+    }
+    if (post.postedBy._id.toString() !== req.user._id.toString()) {
+      res.status(400).json({ message: "You haven't access to Delete" });
+      return;
+    }
+    await post.remove();
+    res.status(200).json({ response: post });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
 module.exports = {
   createNewPost,
   getAllPosts,
   getPagedPosts,
   getPostById,
   getAllPostsOfUser,
+  editThePost,
+  deletePost,
 };
