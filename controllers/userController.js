@@ -106,6 +106,39 @@ const getMyProfile = async (req, res) => {
   }
 };
 
+const updateProfilePhoto = async (req, res) => {
+  try {
+    const { image } = req.body;
+    req.user.profilephoto = image;
+    await req.user.save();
+    res.status(200).json({ response: req.user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const updateProfileInfo = async (req, res) => {
+  try {
+    const { firstName, lastName, link, description } = req.body;
+    req.user.firstName = firstName;
+    req.user.lastName = lastName;
+    req.user.link = link;
+    req.user.description = description;
+    await req.user.save();
+    res.status(200).json({ response: req.user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
 const getUserProfile = async (req, res) => {
   try {
     const { userName } = req.params;
@@ -129,5 +162,7 @@ module.exports = {
   signInUser,
   getAllUsers,
   getMyProfile,
+  updateProfilePhoto,
+  updateProfileInfo,
   getUserProfile,
 };
