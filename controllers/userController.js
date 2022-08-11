@@ -79,7 +79,55 @@ const signInUser = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    let users = await User.find({});
+    res.status(200).json({ response: users });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const getMyProfile = async (req, res) => {
+  try {
+    let user = req.user;
+    res.status(200).json({
+      response: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const getUserProfile = async (req, res) => {
+  try {
+    const { userName } = req.params;
+    const userDetails = await User.findOne({ userName });
+    if (!userDetails) {
+      res.status(403).json({ message: "User not found" });
+      return;
+    }
+    res.status(200).json({ response: userDetails });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
 module.exports = {
   signUpUser,
   signInUser,
+  getAllUsers,
+  getMyProfile,
+  getUserProfile,
 };
