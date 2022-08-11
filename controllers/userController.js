@@ -258,6 +258,38 @@ const unfollowUser = async (req, res) => {
   }
 };
 
+const addBookmarkToPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    req.user.savedpost.unshift(postId);
+    await req.user.save();
+    res.status(200).json({ response: req.user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const removeBookMarkFromPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    req.user.savedpost = req.user.savedpost.filter(
+      (id) => id.toString() !== postId.toString()
+    );
+    await req.user.save();
+    res.status(200).json({ response: req.user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
 module.exports = {
   signUpUser,
   signInUser,
@@ -270,4 +302,6 @@ module.exports = {
   getFollowingDetails,
   followUser,
   unfollowUser,
+  addBookmarkToPost,
+  removeBookMarkFromPost,
 };
