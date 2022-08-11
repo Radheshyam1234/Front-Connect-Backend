@@ -170,6 +170,72 @@ const deletePost = async (req, res) => {
   }
 };
 
+const likeThePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      res.status(400).json({ message: "No post found" });
+      return;
+    }
+
+    post.likes.unshift(req.user._id);
+    await post.save();
+    return res.status(200).json({ response: post });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const removeLikeFromPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      res.status(400).json({ message: "No post found" });
+      return;
+    }
+
+    post.likes = post.likes.filter(
+      (id) => id.toString() !== req.user._id.toString()
+    );
+
+    await post.save();
+    return res.status(200).json({ response: post });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const getUsersWhoLikedThePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const post = await Post.findOne({ _id: postId }).populate({
+      path: "likes",
+      select: " firstName lastName userName profilephoto ",
+    });
+
+    res.status(200).json({ response: post.likes });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
 module.exports = {
   createNewPost,
   getAllPosts,
@@ -178,4 +244,7 @@ module.exports = {
   getAllPostsOfUser,
   editThePost,
   deletePost,
+  likeThePost,
+  removeLikeFromPost,
+  getUsersWhoLikedThePost,
 };
