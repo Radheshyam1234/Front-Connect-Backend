@@ -14,6 +14,8 @@ const {
   getFollowingDetails,
   followUser,
   unfollowUser,
+  addBookmarkToPost,
+  removeBookMarkFromPost,
 } = require("../controllers/userController");
 
 router.route("/login").post(signInUser);
@@ -28,5 +30,6 @@ router.route("/:userName/followers").get(getFollowersDetails);
 router.route("/:userName/following").get(getFollowingDetails);
 router.route("/:userName/follow").post(followUser);
 router.route("/:userName/unfollow").post(unfollowUser);
-
+router.route("/:postId/addbookmark").post(addBookmarkToPost);
+router.route("/:postId/removebookmark").post(removeBookMarkFromPost);
 module.exports = router;
